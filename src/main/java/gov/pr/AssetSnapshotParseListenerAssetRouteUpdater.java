@@ -45,31 +45,14 @@ public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapsho
         }
 
         AssetRoute assetRoute = Globals.assetRoutes.get(assetSnapshot.getAssetId());
-
         SimpleFeatureIterator iterator = null;
         try {
-
-            /*String filter;
-            if (assetRoute.getPossibleRoutes().isEmpty()) {
-                filter = String.format("CONTAINS(PATH, %s)", toWKT(assetSnapshot.getTrail()));
-            } else {
-                StringBuilder builder = new StringBuilder("( TYPE <> 'ROUTE' OR ");
-                for (String possibleRoute : assetRoute.getPossibleRoutes()) {
-                    builder.append("DESCRIPTIO = '" + possibleRoute + "' OR");
-                }
-                builder.append(") AND ");
-                filter = builder.append(String.format(" CONTAINS(PATH, %s)", toWKT(assetSnapshot.getTrail()))).toString();
-            }
-            System.out.println(filter);*/
 
             WKTReader reader = new WKTReader();
             Geometry trail = reader.read(toWKT(assetSnapshot.getTrail()));
 
             SimpleFeatureCollection features = featureSource.getFeatures();
-
-            assetRoute.getPossibleRoutes().clear();
             iterator = features.features();
-
             Set<String> newPossibleRoutes = new HashSet<>();
             while (iterator.hasNext()) {
                 SimpleFeature currGeofence = iterator.next();
@@ -79,10 +62,11 @@ public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapsho
                         assetRoute.getPossibleRoutes().clear();
                         return;
                     }
+                    String route = (String ) currGeofence.getAttribute("DESCRIPTIO");
                     if(assetRoute.getPossibleRoutes().isEmpty()) {
-                        newPossibleRoutes.add((String) currGeofence.getAttribute("DESCRIPTIO"));
-                    } else if(assetRoute.getPossibleRoutes().contains(currGeofence.getAttribute("DESCRIPTIO"))) {
-                        newPossibleRoutes.add((String) currGeofence.getAttribute("DESCRIPTIO"));
+                        newPossibleRoutes.add(route);
+                    } else if(assetRoute.getPossibleRoutes().contains(route)) {
+                        newPossibleRoutes.add(route);
                     }
 
                 }
@@ -94,6 +78,8 @@ public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapsho
             } else if(!assetRoute.getPossibleRoutes().contains(assetRoute.getLastKnownRoute())) {
                 assetRoute.setLastKnownRoute(null);
             }
+
+            Globals.assetRoutes.put(assetSnapshot.getAssetId(), assetRoute);
 
 
         } catch (Exception e) {
