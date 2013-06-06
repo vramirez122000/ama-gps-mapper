@@ -122,6 +122,13 @@
                             // marcador de las coordenadas actuales del vehiculo
                             var markerLatLng = new L.LatLng(assetSnapshot.trail[0].lat, assetSnapshot.trail[0].lng);
 
+                            // estela del vehiculo
+                            var trailLatLngs = [];
+                            for (var j = 0; j < assetSnapshot.trail.length; j++) {
+                                var trailNode = assetSnapshot.trail[j];
+                                trailLatLngs.push(new L.LatLng(trailNode.lat, trailNode.lng));
+                            }
+
                             // informacion del vehiculo a desplegarse
                             var popupContent = 'Veh&iacute;culo: ' + (assetSnapshot.assetDescription || '') + '<br/>'
                                     + 'Ruta: ' + (assetSnapshot.route || 'Desconocida') + '<br/>'
@@ -135,6 +142,9 @@
                                 if (assetSnapshot.route && routeMarkerIcons[assetSnapshot.route]) {
                                     layer.marker.setIcon(routeMarkerIcons[assetSnapshot.route]);
                                 }
+
+                                layer.trail.setLatLngs(trailLatLngs);
+                                layer.trail.redraw();
                             } else {
                                 // crear nuevo layer para este vehiculo
                                 layer = {};
@@ -153,6 +163,7 @@
                                     layer.marker.addTo(map);
                                 }
 
+                                layer.trail = L.polyline(trailLatLngs, { color: 'black' }).addTo(map);
                                 layers[assetSnapshot.assetId] = layer;
                             }
                         }
@@ -185,7 +196,7 @@
                 }
                 map.setView([18.430189, -66.060061], 13);
             });
-            map.locate({setView: true, maxZoom: 17});
+//            map.locate({setView: true, maxZoom: 17});
 
             // set refresh interval to 5 seconds
             setInterval(drawOverlay, 5000);
