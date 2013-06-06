@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Mapa de la Autoridad Metropolitana de Autobuses de Puerto Rico</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="keywords"
+          content="guagua, Autoridad Metropolitana de Autobuses, mapa ama, ama"/>
+
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.css"/>
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.5/leaflet.ie.css"/>
+    <![endif]-->
+    <link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.min.css" rel="stylesheet">
+    <link href="leaflet.awesome-markers.css" rel="stylesheet">
+
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
+    <script src="leaflet.awesome-markers.min.js"></script>
+
+    <script type="text/javascript">
+
+        var layers = {};
+        var timeStamp = 0;
+        var routeColors = {
+            'MT- 2': 'red',
+            '3': 'darkred',
+            '4': 'orange',
+            '5': 'green',
+            '6': 'darkgreen',
+            '7': 'blue',
+            '8': 'darkblue',
+            '9': 'purple',
+            '10': 'darkpurple',
+            '11': 'cadetblue',
+            '15': 'red',
+            '16': 'darkred',
+            '17': 'orange',
+            '18': 'green',
+            '19': 'darkgreen',
+            '21': 'blue',
+            '22': 'darkblue',
+            '26': 'purple',
+            '27': 'darkpurple',
+            '28': 'cadetblue',
+            '29': 'red',
+            '30': 'darkred',
+            '31': 'orange',
+            '37': 'green',
+            '40': 'darkgreen',
+            '41': 'blue',
+            '43': 'darkblue',
+            '44': 'purple',
+            '45': 'darkpurple',
+            '46': 'red',
+            '48': 'darkred',
+            '49': 'orange',
+            '50': 'green',
+            '52': 'darkgreen',
+            '53': 'blue',
+            '91': 'darkblue',
+            '92': 'purple'
+        };
+        var routeMarkerIcons = {};
+
+        $(document).ready(function() {
+            $('#map').css('width', window.innerWidth - 52);
+            var routeMarkerIcons = {};
+            for (var key in routeColors) {
+                if (!routeColors.hasOwnProperty(key)) {
+                    continue;
+                }
+                routeMarkerIcons[key] = L.AwesomeMarkers.icon({icon: 'icon-truck', color: routeColors[key]});
+                $('#routes').append('<li><div style=\"' +
+                        'text-shadow: -1px 0 gray, 0 1px gray, 1px 0 gray, 0 -1px gray; ' +
+                        'border-radius: 3px; ' +
+                        'color: white; ' +
+                        'padding: 1px; ' +
+                        'margin: 1px; ' +
+                        'text-align: center; ' +
+                        'border: 1px solid black; ' +
+                        'background-color:' + routeColors[key] + '\">' + key +'</div></li>');
+            }
+
+            var map = L.map('map', {
+                center: [18.430189, -66.060061],
+                zoom: 13
+            });
+
+            var url = 'http://{s}.tile2.opencyclemap.org/transport/{z}/{x}/{y}.png';
+            L.tileLayer(url, {
+                minZoom: 10,
+                maxZoom: 17,
+                maxBounds: [
+                    [18.352687, -66.179752],
+                    [18.477284, -65.928097]
+                ],
+                tms: false,
+                detectRetina: true,
+                reuseTiles: true
+            }).addTo(map);
+        });
+    </script>
+</head>
+<body>
+    <div id="map" style="position: absolute; top: 0; left: 0; height: 100%;"></div>
+    <div id="legend" style="font-family: sans-serif; float: right; background-color: white; width: 52px">
+        <ul id="routes" style="width: 50px; list-style-type: none; margin: 1em; padding: 0"></ul>
+    </div>
+</body>
+</html>
