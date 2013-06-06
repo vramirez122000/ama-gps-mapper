@@ -46,6 +46,7 @@ public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapsho
 
         AssetRoute assetRoute = Globals.assetRoutes.get(assetSnapshot.getAssetId());
 
+        SimpleFeatureIterator iterator = null;
         try {
 
             /*String filter;
@@ -67,7 +68,7 @@ public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapsho
             SimpleFeatureCollection features = featureSource.getFeatures();
 
             assetRoute.getPossibleRoutes().clear();
-            SimpleFeatureIterator iterator = features.features();
+            iterator = features.features();
 
             Set<String> newPossibleRoutes = new HashSet<>();
             while (iterator.hasNext()) {
@@ -97,6 +98,10 @@ public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapsho
 
         } catch (Exception e) {
             throw new RuntimeException(e);
+        } finally {
+            if (iterator != null) {
+                iterator.close();
+            }
         }
     }
 

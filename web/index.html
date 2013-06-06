@@ -17,11 +17,11 @@
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
     <script type="text/javascript" src="http://cdn.leafletjs.com/leaflet-0.5/leaflet.js"></script>
     <script src="leaflet.awesome-markers.min.js"></script>
+    <script src="leaflet-kml.js"></script>
 
     <script type="text/javascript">
 
         var layers = {};
-        var timeStamp = 0;
         var routeColors = {
             'MT- 2': 'red',
             '3': 'darkred',
@@ -99,13 +99,103 @@
                 detectRetina: true,
                 reuseTiles: true
             }).addTo(map);
+
+            var kmlLayer = new L.KML("rutas_2013.kml", {async: true});
+
+            kmlLayer.on("loaded", function(e) {
+                map.fitBounds(e.target.getBounds());
+            });
+
+            map.addLayer(kmlLayer);
+
+            var drawOverlay = function() {
+                $.ajax('assets.json', {
+                    contentType: 'application/json; charset=UTF-8',
+                    dataType: 'json',
+                    success: function (assetSnapshots) {
+                        for (var i = 0; i < assetSnapshots.assetSnapshots.length; i++) {
+                            var assetSnapshot = assetSnapshots.assetSnapshots[i];
+                            if (assetSnapshot.trail.length < 1) {
+                                continue;
+                            }
+
+                            // marcador de las coordenadas actuales del vehiculo
+                            var markerLatLng = new L.LatLng(assetSnapshot.trail[0].lat, assetSnapshot.trail[0].lng);
+
+                            // informacion del vehiculo a desplegarse
+                            var popupContent = 'Veh&iacute;culo: ' + (assetSnapshot.assetDescription || '') + '<br/>'
+                                    + 'Ruta: ' + (assetSnapshot.route || 'Desconocida') + '<br/>'
+                                    + 'Estatus: ' + assetSnapshot.status + '<br/>';
+
+                            var layer = layers[assetSnapshot.assetId];
+                            if (layer) {
+                                // actualizar layer existente para el vehiculo
+                                layer.marker.setLatLng(markerLatLng).update();
+                                layer.marker.bindPopup(popupContent);
+                                if (assetSnapshot.route && routeMarkerIcons[assetSnapshot.route]) {
+                                    layer.marker.setIcon(routeMarkerIcons[assetSnapshot.route]);
+                                }
+                            } else {
+                                // crear nuevo layer para este vehiculo
+                                layer = {};
+                                layer.marker = L.marker(markerLatLng);
+                                layer.marker.bindPopup(popupContent);
+                                if (assetSnapshot.route && routeMarkerIcons[assetSnapshot.route]) {
+                                    // vehiculo ya tiene ruta determinada
+                                    layer.marker.setIcon(routeMarkerIcons[assetSnapshot.route]);
+                                } else {
+                                    // ruta de vehiculo todavia no se ha determinado
+                                    layer.marker.setIcon(new L.Icon.Default());
+                                }
+
+                                if (assetSnapshot.status == 'RUNNING') {
+                                    // vehiculo esta en servicio, desplegar en el mapa
+                                    layer.marker.addTo(map);
+                                }
+
+                                layers[assetSnapshot.assetId] = layer;
+                            }
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        if(console !== "undefined" && console.log !== "undefined") {
+                            console.log("location error");
+                        }
+                        for (var key in layers) {
+                            if (!layers.hasOwnProperty(key)) {
+                                //The current property is not a direct property of p
+                                continue;
+                            }
+                            //Do your logic with the property here
+                            var layer = layers[key];
+                            map.removeLayer(layer.marker);
+                        }
+                    }
+                })
+            };
+
+            drawOverlay();
+
+            map.on('locationfound', function (e) {
+                // todo
+            });
+            map.on('locationerror', function () {
+                if(console !== "undefined" && console.log !== "undefined") {
+                    console.log("location error");
+                }
+                map.setView([18.430189, -66.060061], 13);
+            });
+            map.locate({setView: true, maxZoom: 17});
+
+            // set refresh interval to 5 seconds
+            setInterval(drawOverlay, 5000);
         });
     </script>
 </head>
 <body>
     <div id="map" style="position: absolute; top: 0; left: 0; height: 100%;"></div>
     <div id="legend" style="font-family: sans-serif; float: right; background-color: white; width: 52px">
-        <ul id="routes" style="width: 50px; list-style-type: none; margin: 1em; padding: 0"></ul>
+        <ul id="routes" style="width: 50px; list-style-type: none; margin: 0.5em; padding: 0"></ul>
     </div>
 </body>
 </html>

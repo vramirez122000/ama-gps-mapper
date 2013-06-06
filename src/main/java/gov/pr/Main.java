@@ -30,7 +30,7 @@ import java.util.TimerTask;
 public class Main {
 
     public static final String serverUrl = "http://gps.pr.gov/amagps/assetSnapshots.json";
-    public static final String outFie = "assetSnapshots.json";
+    public static final String outFie = "web/assets.json";
 
     public static void main(String[] args) throws Exception {
 
