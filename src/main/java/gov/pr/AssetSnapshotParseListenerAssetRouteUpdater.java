@@ -57,30 +57,26 @@ public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapsho
             while (iterator.hasNext()) {
                 SimpleFeature currGeofence = iterator.next();
                 Geometry defaultGeometry = (Geometry) currGeofence.getDefaultGeometry();
-                if(defaultGeometry.contains(trail)) {
+                if (defaultGeometry.contains(trail)) {
                     if (!GeofenceType.ROUTE.name().equals(currGeofence.getAttribute("TYPE"))) {
                         assetRoute.getPossibleRoutes().clear();
                         return;
                     }
-                    String route = (String ) currGeofence.getAttribute("DESCRIPTIO");
-                    if(assetRoute.getPossibleRoutes().isEmpty()) {
+                    String route = (String) currGeofence.getAttribute("DESCRIPTIO");
+                    if (assetRoute.getPossibleRoutes().isEmpty()) {
                         newPossibleRoutes.add(route);
-                    } else if(assetRoute.getPossibleRoutes().contains(route)) {
+                    } else if (assetRoute.getPossibleRoutes().contains(route)) {
                         newPossibleRoutes.add(route);
                     }
-
                 }
             }
 
             assetRoute.setPossibleRoutes(newPossibleRoutes);
-            if(assetRoute.getPossibleRoutes().size() == 1) {
+            if (assetRoute.getPossibleRoutes().size() == 1) {
                 assetRoute.setLastKnownRoute(assetRoute.getPossibleRoutes().iterator().next());
-            } else if(!assetRoute.getPossibleRoutes().contains(assetRoute.getLastKnownRoute())) {
+            } else if (!assetRoute.getPossibleRoutes().contains(assetRoute.getLastKnownRoute())) {
                 assetRoute.setLastKnownRoute(null);
             }
-
-            Globals.assetRoutes.put(assetSnapshot.getAssetId(), assetRoute);
-
 
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -98,8 +94,8 @@ public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapsho
 
     private static String toWKT(List<LatLng> trail) {
 
-        if(trail.size() == 1) {
-            return String.format("POINT(%s %s)",trail.get(0).getLng(), trail.get(0).getLat());
+        if (trail.size() == 1) {
+            return String.format("POINT(%s %s)", trail.get(0).getLng(), trail.get(0).getLat());
         }
 
         StringBuilder stringBuilder = new StringBuilder("LINESTRING(");
