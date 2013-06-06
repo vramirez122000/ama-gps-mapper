@@ -16,6 +16,7 @@ public class AssetSnapshot {
     private String route;
     private List<LatLng> trail = new ArrayList<LatLng>(3);
     private int statusCode;
+    private String assetDescription;
 
 
     public int getAssetId() {
@@ -48,5 +49,13 @@ public class AssetSnapshot {
 
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
+    }
+
+    public String getAssetDescription() {
+        return assetDescription;
+    }
+
+    public void setAssetDescription(String assetDescription) {
+        this.assetDescription = assetDescription;
     }
 }

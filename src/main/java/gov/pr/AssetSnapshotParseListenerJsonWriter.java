@@ -17,7 +17,7 @@ import java.util.Date;
 public class AssetSnapshotParseListenerJsonWriter implements AssetSnapshotParseListener {
 
     private Writer out;
-    private ObjectMapper objectMapper;
+    private ObjectMapper objectMapper = new ObjectMapper();
     private boolean first = true;
 
     public AssetSnapshotParseListenerJsonWriter(Writer out) {
@@ -41,6 +41,17 @@ public class AssetSnapshotParseListenerJsonWriter implements AssetSnapshotParseL
     }
     @Override
     public void assetSnapshotParsed(AssetSnapshot assetSnapshot) {
+
+        AssetRoute assetRoute = Globals.assetRoutes.get(assetSnapshot.getAssetId());
+        if(assetRoute != null) {
+            assetSnapshot.setRoute(assetRoute.getLastKnownRoute());
+        }
+
+        Asset asset = Globals.assets.get(assetSnapshot.getAssetId());
+        if(asset != null) {
+            assetSnapshot.setAssetDescription(asset.getDescription());
+        }
+
         try {
             if (first) {
                 first = false;

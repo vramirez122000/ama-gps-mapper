@@ -13,10 +13,10 @@ import java.net.URL;
  */
 public class AssetSnapshotParser {
 
-    private AssetSnapshotParseListener listener;
+    private AssetSnapshotParseListener[] listeners;
 
-    public AssetSnapshotParser(AssetSnapshotParseListener listener) {
-        this.listener = listener;
+    public AssetSnapshotParser(AssetSnapshotParseListener... listeners) {
+        this.listeners = listeners;
     }
 
     public void parse(URL url) throws IOException {
@@ -30,7 +30,9 @@ public class AssetSnapshotParser {
         if (parser.nextToken() != JsonToken.START_OBJECT) {
             throw new IOException("Expected data to start with an Object");
         }
-        listener.parseBegin();
+        for (AssetSnapshotParseListener listener : listeners) {
+            listener.parseBegin();
+        }
 
         while (parser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = parser.getCurrentName();
@@ -43,14 +45,19 @@ public class AssetSnapshotParser {
 
                 while (parser.nextToken() != JsonToken.END_ARRAY) {
                     AssetSnapshot snapshot = read(parser);
-                    listener.assetSnapshotParsed(snapshot);
+                    for (AssetSnapshotParseListener listener : listeners) {
+                        listener.assetSnapshotParsed(snapshot);
+                    }
                 }
 
             } else { // ignore, or signal error?
                 System.out.printf("Unrecognized field %s\n", fieldName);
             }
         }
-        listener.parseEnd();
+
+        for (AssetSnapshotParseListener listener : listeners) {
+            listener.parseEnd();
+        }
         parser.close();
     }
 
