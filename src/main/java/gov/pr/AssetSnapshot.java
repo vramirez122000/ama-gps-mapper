@@ -17,6 +17,7 @@ public class AssetSnapshot {
     private List<LatLng> trail = new ArrayList<LatLng>(3);
     private int statusCode;
 
+
     public int getAssetId() {
         return assetId;
     }

@@ -11,20 +11,26 @@ import java.net.URL;
 /**
  * User: victor
  */
-public class AmaBusMapper {
+public class AssetSnapshotParser {
 
+    private AssetSnapshotParseListener listener;
 
-    public static void main(String[] args) throws IOException {
+    public AssetSnapshotParser(AssetSnapshotParseListener listener) {
+        this.listener = listener;
+    }
+
+    public void parse(URL url) throws IOException {
 
         JsonFactory factory = new JsonFactory();
         // configure, if necessary:
         factory.enable(JsonParser.Feature.ALLOW_COMMENTS);
-        JsonParser parser = factory.createParser(new URL("http://gps.pr.gov/amagps/assetSnapshots.json"));
+        JsonParser parser = factory.createParser(url);
 
         // Sanity check: verify that we got "Json Object":
         if (parser.nextToken() != JsonToken.START_OBJECT) {
             throw new IOException("Expected data to start with an Object");
         }
+        listener.parseBegin();
 
         while (parser.nextToken() != JsonToken.END_OBJECT) {
             String fieldName = parser.getCurrentName();
@@ -37,12 +43,14 @@ public class AmaBusMapper {
 
                 while (parser.nextToken() != JsonToken.END_ARRAY) {
                     AssetSnapshot snapshot = read(parser);
+                    listener.assetSnapshotParsed(snapshot);
                 }
 
             } else { // ignore, or signal error?
                 System.out.printf("Unrecognized field %s\n", fieldName);
             }
         }
+        listener.parseEnd();
         parser.close();
     }
 
