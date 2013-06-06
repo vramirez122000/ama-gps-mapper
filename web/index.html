@@ -146,6 +146,20 @@
 
                                 layer.trail.setLatLngs(trailLatLngs);
                                 layer.trail.redraw();
+
+                                if (assetSnapshot.status != 'RUNNING') {
+                                    map.removeLayer(layer.marker);
+                                    map.removeLayer(layer.trail);
+                                } else {
+                                    if (!map.hasLayer(layer.marker)) {
+                                        map.addLayer(layer.marker);
+                                    }
+
+                                    if (!map.hasLayer(layer.trail)) {
+                                        map.addLayer(layer.trail);
+                                    }
+                                }
+
                             } else {
                                 // crear nuevo layer para este vehiculo
                                 layer = {};
@@ -182,6 +196,7 @@
                             //Do your logic with the property here
                             var layer = layers[key];
                             map.removeLayer(layer.marker);
+                            map.removeLayer(layer.trail);
                         }
                     }
                 })
