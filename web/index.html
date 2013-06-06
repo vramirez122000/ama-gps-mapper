@@ -187,17 +187,6 @@
 
             drawOverlay();
 
-            map.on('locationfound', function (e) {
-                // todo
-            });
-            map.on('locationerror', function () {
-                if(console !== "undefined" && console.log !== "undefined") {
-                    console.log("location error");
-                }
-                map.setView([18.430189, -66.060061], 13);
-            });
-//            map.locate({setView: true, maxZoom: 17});
-
             // set refresh interval to 5 seconds
             setInterval(drawOverlay, 5000);
         });
