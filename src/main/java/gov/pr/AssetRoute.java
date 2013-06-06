@@ -1,8 +1,6 @@
 package gov.pr;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -16,7 +14,7 @@ public class AssetRoute {
 
     private Integer assetId;
     private String lastKnownRoute;
-    private Set<String> possibleRouteIds = new HashSet<>();
+    private Set<String> possibleRoutes = new HashSet<>();
 
     public Integer getAssetId() {
         return assetId;
@@ -34,11 +32,12 @@ public class AssetRoute {
         this.lastKnownRoute = lastKnownRoute;
     }
 
-    public Set<String> getPossibleRouteIds() {
-        return possibleRouteIds;
+    public Set<String> getPossibleRoutes() {
+        return possibleRoutes;
     }
 
-    public void setPossibleRouteIds(Set<String> possibleRouteIds) {
-        this.possibleRouteIds = possibleRouteIds;
+    public void setPossibleRoutes(Set<String> possibleRoutes) {
+        if(possibleRoutes == null) throw new IllegalArgumentException("cannot be null");
+        this.possibleRoutes = possibleRoutes;
     }
 }

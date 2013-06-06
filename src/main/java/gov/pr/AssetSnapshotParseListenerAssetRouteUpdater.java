@@ -1,12 +1,31 @@
 package gov.pr;
 
+import org.geotools.data.FileDataStore;
+import org.geotools.data.FileDataStoreFinder;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureIterator;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.filter.text.cql2.CQL;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.filter.Filter;
+
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 /**
  * User: victor
  */
 public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapshotParseListener {
+
+    private SimpleFeatureSource featureSource;
+
+    public AssetSnapshotParseListenerAssetRouteUpdater() throws IOException {
+        File file = new File("geofence/geofence.shp");
+        FileDataStore store = FileDataStoreFinder.getDataStore(file);
+        SimpleFeatureSource featureSource = store.getFeatureSource();
+
+    }
 
     @Override
     public void parseBegin() {
@@ -21,9 +40,44 @@ public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapsho
             Globals.assetRoutes.put(v.getAssetId(), v);
         }
 
-        AssetRoute v = Globals.assetRoutes.get(assetSnapshot.getAssetId());
+        AssetRoute assetRoute = Globals.assetRoutes.get(assetSnapshot.getAssetId());
+
+       /* try {
+
+            String filter;
+            if(assetRoute.getPossibleRoutes().isEmpty()) {
+                filter = String.format("CONTAINS(PATH, %s", toWKT(assetSnapshot.getTrail()));
+            } else {
+                StringBuilder builder = new StringBuilder();
+                for (String possibleRoute : assetRoute.getPossibleRoutes()) {
+                    possible
+                }
+                filter = String.format("")
+            }
+
+
+            SimpleFeatureCollection features = featureSource.getFeatures(CQL.toFilter(filter));
+
+            assetRoute.getPossibleRoutes().clear();
+            SimpleFeatureIterator iterator = features.features();
+            while(iterator.hasNext()) {
+                SimpleFeature currGeofence = iterator.next();
+                if (!GeofenceType.ROUTE.equals(currGeofence.getAttribute("TYPE"))) {
+                    return;
+                }
+                assetRoute.getPossibleRoutes().add((String) currGeofence.getAttribute("DESCRIPTIO"));
+            }
+
+
+
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }*/
+
+
         /*List<Geofence> containingGeofences;
-        if(v.getPossibleRouteIds().isEmpty()) {
+        if(v.getPossibleRoutes().isEmpty()) {
             containingGeofences = modelDao.getContainingGeofences(assetSnapshot.getTrail());
         } else {
             Set<Integer> possibleRoutes = v.getPossibleRoutesAsSet();
@@ -37,7 +91,7 @@ public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapsho
                 modelDao.updateAssetRoute(v);
                 return;
             }
-            v.getPossibleRouteIds().put(containingGeofence.getId(), true);
+            v.getPossibleRoutes().put(containingGeofence.getId(), true);
         }
         ImmutableSet<Integer> newPossibleRoutes = v.getPossibleRoutesAsSet();
 
@@ -52,5 +106,15 @@ public class AssetSnapshotParseListenerAssetRouteUpdater implements AssetSnapsho
     @Override
     public void parseEnd() {
 
+    }
+
+    private static String toWKT(List<LatLng> trail) {
+        StringBuilder stringBuilder = new StringBuilder("LINESTRING(");
+        for (LatLng latLng : trail) {
+            stringBuilder.append(latLng.getLng()).append(" ").append(latLng.getLat()).append(",");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        stringBuilder.append(")");
+        return stringBuilder.toString();
     }
 }

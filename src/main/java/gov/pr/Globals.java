@@ -1,5 +1,11 @@
 package gov.pr;
 
+import org.geotools.data.FileDataStore;
+import org.geotools.data.FileDataStoreFinder;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.geometry.GeometryBuilder;
+
+import java.io.File;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -158,6 +164,7 @@ public class Globals {
         assets.put(1000, new Asset(1000, "2010-38"));
         assets.put(1031, new Asset(1031, "2010-39"));
         assets.put(1023, new Asset(1023, "2010-40"));
+
     }
 
 

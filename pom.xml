@@ -46,6 +46,11 @@
             <artifactId>gt-shapefile</artifactId>
             <version>9.2</version>
         </dependency>
+        <dependency>
+            <groupId>org.geotools</groupId>
+            <artifactId>gt-cql</artifactId>
+            <version>9.2</version>
+        </dependency>
     </dependencies>
 
     <repositories>

@@ -1,6 +1,18 @@
 package gov.pr;
 
+import org.geotools.data.FileDataStore;
+import org.geotools.data.FileDataStoreFinder;
+import org.geotools.data.Query;
+import org.geotools.data.simple.SimpleFeatureCollection;
+import org.geotools.data.simple.SimpleFeatureSource;
+import org.geotools.filter.text.cql2.CQL;
+import org.geotools.geometry.GeometryBuilder;
+import org.geotools.geometry.text.WKTParser;
+import org.geotools.referencing.CRS;
+import org.opengis.filter.Filter;
+
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -21,6 +33,8 @@ public class Main {
     public static final String outFie = "assetSnapshots.json";
 
     public static void main(String[] args) throws Exception {
+
+
         final URL url = new URL(serverUrl);
         Timer  timer = new Timer(true);
         timer.schedule(new TimerTask() {
