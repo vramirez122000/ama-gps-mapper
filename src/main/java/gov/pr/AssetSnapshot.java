@@ -16,6 +16,7 @@ public class AssetSnapshot {
     private String route;
     private List<LatLng> trail = new ArrayList<LatLng>(3);
     private int statusCode;
+    private RunningStatus status = RunningStatus.UNKNOWN;
     private String assetDescription;
 
 
@@ -57,5 +58,13 @@ public class AssetSnapshot {
 
     public void setAssetDescription(String assetDescription) {
         this.assetDescription = assetDescription;
+    }
+
+    public RunningStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(RunningStatus status) {
+        this.status = status;
     }
 }

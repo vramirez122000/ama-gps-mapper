@@ -52,6 +52,8 @@ public class AssetSnapshotParseListenerJsonWriter implements AssetSnapshotParseL
             assetSnapshot.setAssetDescription(asset.getDescription());
         }
 
+        assetSnapshot.setStatus(RunningStatus.forStatusCode(assetSnapshot.getStatusCode()));
+
         try {
             if (first) {
                 first = false;
