@@ -28,7 +28,7 @@ public class AssetSnapshotParser {
 
         // Sanity check: verify that we got "Json Object":
         if (parser.nextToken() != JsonToken.START_OBJECT) {
-            throw new IOException("Expected data to start with an Object");
+            throw new IOException("Expected data to start Object, instead: " + parser.getCurrentToken());
         }
         for (AssetSnapshotParseListener listener : listeners) {
             listener.parseBegin();
